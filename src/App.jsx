@@ -3,6 +3,7 @@ import { Route, Routes, NavLink } from 'react-router-dom'
 import Auth from './views/Auth'
 import Register from './views/Register'
 import Login from './views/Login'
+import TodoList from './views/TodoList'
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="register" element={ <Register /> } />
           <Route path="login" element={ <Login /> } />
         </Route>
+        <Route path="/todo" element={ <TodoList /> }/>
       </Routes>
     </>
   )
