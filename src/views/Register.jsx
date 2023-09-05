@@ -29,7 +29,7 @@ const Register = () => {
     // get 路徑, headers
     const res = await axios.post(`${VITE_APP_HOST}/users/sign_up`, formData)
     console.log(res);
-    navigate('/auth/login') // 當登入成功，轉址到登入頁
+    navigate('/auth/login') // 當註冊成功，轉址到登入頁
   }
 
   return (<>
@@ -82,13 +82,23 @@ const Register = () => {
               // onChange={handleChange}
               required />
 
-            {/* <input className="formControls_btnSubmit" type="button" onClick={"javascript:location.href='#todoListPage'"} value="註冊帳號" /> */}
             <button
               className="formControls_btnSubmit"
-              onClick={e => {
+              type="button"
+              onClick={(e) => {
+                e.preventDefault()
                 register()
               }}
             >註冊帳號</button>
+            <button
+              className="formControls_btnSubmit"
+              type="button"
+              onClick={e => {
+                e.preventDefault()
+                navigate('/auth/login');
+              }}
+            >登入</button>
+
           </form>
         </div>
       </div>

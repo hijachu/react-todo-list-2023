@@ -1,36 +1,109 @@
-import {useState} from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // hook
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const { VITE_APP_HOST } = import.meta.env;
 
 function Login () {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [token, setToken] = useState('');
+  const [inputFields, setInputFields] = useState({
+    email: "",
+    password: ""
+  });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false)
+  const [loginError, setLoginError] = useState('')
+
 
   const navigate = useNavigate() // 把 hook 取出來做使用
-  const [isLoading, setIsLoading] = useState(false) // 狀態
 
   const login = async () => {
     try {
+      console.log('press login');
       setIsLoading(true)
+
       const response = await axios.post(`${VITE_APP_HOST}/users/sign_in`, {
-        email: email,
-        password: password,
+        email: inputFields.email,
+        password: inputFields.password,
       });
 
-      setToken(response.data.token);
-      const { token } = res.data;
+      const { token } = response.data;
+      console.log('token', token);
       document.cookie = `token=${token};`
       setIsLoading(false);
+      Swal.fire({
+        title: 'Title...',
+        text: 'Hello World!',
+        type: 'success'
+      }, function() {
+        console.log('bye');
+      });
+      navigate('/todo');
 
     } catch (error) {
-      setToken('登入失敗: ' + error.message);
       setIsLoading(false);
-      navigate('/todo');
+      console.log(error);
+      // setLoginError(error.message); // Request failed with status code 404
+      setLoginError(error.response.data.message);
+      Swal.fire({
+        title: 'Login Error!!',
+        text: loginError,
+        icon: 'error'
+      })
     }
   };
+
+  const handleChange = (e) => {
+    setInputFields({ ...inputFields, [e.target.name]: e.target.value });
+  };
+
+  // validate input field when blur
+  function validateValues (inputValues) {
+    let errors = {};
+
+    console.log('arguments', arguments)
+    console.log('arguments.length', arguments.length)
+
+    // email validation error
+    if (arguments.length === 1 || arguments[1]?.target.name === 'email' ) {
+      if (inputValues.email.length === 0) {
+        errors.email = "Email 欄位不可留空";
+      }
+      else if (inputValues.email.length < 10) {
+        errors.email = "Email 長度太短";
+      }
+      else if (/\S+@\S+\.\S+/.test(errors.email)) {
+        errors.email = "Email 格式不正確";
+      }
+    }
+
+    // password validation error
+    if (arguments.length === 1 || arguments[1]?.target.name === 'password') {
+      if (inputValues.password.length === 0) {
+        errors.password = "密碼 欄位不可留空";
+      }
+      else if (inputValues.password.length < 5) {
+        errors.password = "密碼 長度太短";
+      }
+    }
+
+    return errors;
+  }
+
+  const handleBlur = (event) => {
+    event.preventDefault();
+    setErrors(validateValues(inputFields, event));
+  };
+
+  // const finishSubmit = () => {
+  //   console.log(inputFields);
+  // };
+
+  // useEffect(() => {
+  //   if (Object.keys(errors).length === 0 && isLoading) {
+  //     finishSubmit();
+  //   }
+  // }, [errors]);
 
   return (<>
     <div id="loginPage" className="bg-yellow">
@@ -53,29 +126,49 @@ function Login () {
               id="email"
               name="email"
               placeholder="請輸入 email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={inputFields.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
               required />
-            <span>此欄位不可留空</span>
+            {/* <span>此欄位不可留空</span> */}
+            {errors.email && <span>{errors.email}</span>}
 
-            <label className="formControls_label" htmlFor="pwd">密碼</label>
+            <label className="formControls_label" htmlFor="password">密碼</label>
             <input
               className="formControls_input"
               type="password"
-              name="pwd"
-              id="pwd"
+              name="password"
+              id="password"
               placeholder="請輸入密碼"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
+              value={inputFields.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
               required />
-            {/* <input className="formControls_btnSubmit" type="button" onClick="{javascript:location.href='#todoListPage'}" value="登入" /> */}
-            {/* <a className="formControls_btnLink" href="#signUpPage">註冊帳號</a> */}
+            {errors.password && <span>{errors.password}</span>}
+            <p><span>inputFileds: </span>{JSON.stringify(inputFields)}</p>
+            <p><span>errors: </span>{JSON.stringify(errors)}</p>
+            <p><span>isLoading: </span>{isLoading ? 'true': 'false'}</p>
             <button
+              className="formControls_btnSubmit"
               type="button"
               disabled={isLoading}
+              onClick={e => {
+                // validate all input field
+                console.log('yuchih');
+                setErrors(validateValues(inputFields));
+                !errors && login()
+              }}
+              >登入</button>
+            {loginError && <span>{loginError}</span>}
+            <button
               className="formControls_btnSubmit"
-              onClick={login}>登入</button>
-            <p>Token: {token}</p>
+              type="button"
+              onClick={e => {
+                e.preventDefault();
+                navigate('/auth/register');
+              }}
+              >註冊帳號</button>
+
           </form>
         </div>
       </div>

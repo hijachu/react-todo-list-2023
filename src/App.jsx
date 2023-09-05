@@ -10,10 +10,10 @@ function App() {
 
   return (
     <>
-      <nav>導覽列
+      {/* <nav>導覽列
         <NavLink to="/auth/register">註冊</NavLink>
         <NavLink to="/auth/login">登入</NavLink>
-      </nav>
+      </nav> */}
       <Routes>
         <Route path="/auth" element={ <Auth /> }>
           <Route path="register" element={ <Register /> } />
