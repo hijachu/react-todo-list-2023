@@ -19,7 +19,7 @@ function Login () {
 
   const login = async () => {
     try {
-      console.log('press login');
+      // console.log('press login button');
       setIsLoading(true)
 
       const response = await axios.post(`${VITE_APP_HOST}/users/sign_in`, {
@@ -54,15 +54,18 @@ function Login () {
   };
 
   const handleChange = (e) => {
-    setInputFields({ ...inputFields, [e.target.name]: e.target.value });
+    setInputFields({
+      ...inputFields,
+      [e.target.name]: e.target.value
+    });
   };
 
   // validate input field when blur
   function validateValues (inputValues) {
     let errors = {};
 
-    console.log('arguments', arguments)
-    console.log('arguments.length', arguments.length)
+    // console.log('arguments', arguments)
+    // console.log('arguments.length', arguments.length)
 
     // email validation error
     if (arguments.length === 1 || arguments[1]?.target.name === 'email' ) {
@@ -145,16 +148,17 @@ function Login () {
               onBlur={handleBlur}
               required />
             {errors.password && <span>{errors.password}</span>}
-            <p><span>inputFileds: </span>{JSON.stringify(inputFields)}</p>
+
+            {/* <p><span>inputFileds: </span>{JSON.stringify(inputFields)}</p>
             <p><span>errors: </span>{JSON.stringify(errors)}</p>
-            <p><span>isLoading: </span>{isLoading ? 'true': 'false'}</p>
+            <p><span>isLoading: </span>{isLoading ? 'true': 'false'}</p> */}
+
             <button
               className="formControls_btnSubmit"
               type="button"
               disabled={isLoading}
-              onClick={e => {
+              onClick={() => {
                 // validate all input field
-                console.log('yuchih');
                 setErrors(validateValues(inputFields));
                 !errors && login()
               }}
