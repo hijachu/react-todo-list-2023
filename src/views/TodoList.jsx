@@ -2,7 +2,6 @@
 
 const TodoList = () => {
   return (<>
-    {/* <!-- ToDo List --> */}
     <div id="todoListPage" className="bg-half">
       <nav>
         <h1><a href="#">ONLINE TODO LIST</a></h1>

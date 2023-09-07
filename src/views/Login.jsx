@@ -62,7 +62,7 @@ function Login () {
 
   // validate input field when blur
   function validateValues (inputValues) {
-    let errors = {};
+    let validationErrors = {};
 
     // console.log('arguments', arguments)
     // console.log('arguments.length', arguments.length)
@@ -70,27 +70,27 @@ function Login () {
     // email validation error
     if (arguments.length === 1 || arguments[1]?.target.name === 'email' ) {
       if (inputValues.email.length === 0) {
-        errors.email = "Email 欄位不可留空";
+        validationErrors.email = "Email 欄位不可留空";
       }
       else if (inputValues.email.length < 10) {
-        errors.email = "Email 長度太短";
+        validationErrors.email = "Email 長度太短";
       }
-      else if (/\S+@\S+\.\S+/.test(errors.email)) {
-        errors.email = "Email 格式不正確";
+      else if (/\S+@\S+\.\S+/.test(validationErrors.email)) {
+        validationErrors.email = "Email 格式不正確";
       }
     }
 
     // password validation error
     if (arguments.length === 1 || arguments[1]?.target.name === 'password') {
       if (inputValues.password.length === 0) {
-        errors.password = "密碼 欄位不可留空";
+        validationErrors.password = "密碼 欄位不可留空";
       }
       else if (inputValues.password.length < 5) {
-        errors.password = "密碼 長度太短";
+        validationErrors.password = "密碼 長度太短";
       }
     }
 
-    return errors;
+    return {...errors, ...validationErrors};
   }
 
   const handleBlur = (event) => {
