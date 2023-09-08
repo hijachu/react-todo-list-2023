@@ -132,8 +132,8 @@ const Register = () => {
 
       setRegisterError(error.response.data.message);
       Swal.fire({
-        title: "Rigister Error!!",
-        text: registerError,
+        title: "註冊帳號錯誤!!",
+        text: `${registerError}`,
         icon: "error",
       });
     }

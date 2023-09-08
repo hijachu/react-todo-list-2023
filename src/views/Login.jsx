@@ -19,7 +19,7 @@ function Login () {
 
   const login = async () => {
     try {
-      // console.log('press login button');
+      console.log('press login button');
       setIsLoading(true)
 
       const response = await axios.post(`${VITE_APP_HOST}/users/sign_in`, {
@@ -27,10 +27,12 @@ function Login () {
         password: inputFields.password,
       });
 
-      const { token } = response.data;
+      const { token, exp } = response.data;
       console.log('token', token);
-      document.cookie = `token=${token};`
+      document.cookie = `token=${token};expires=${new Date(exp * 1000)}`;
+
       setIsLoading(false);
+
       Swal.fire({
         title: 'Title...',
         text: 'Hello World!',
