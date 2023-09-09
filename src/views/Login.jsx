@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 const { VITE_APP_HOST } = import.meta.env;
 
 function Login () {
-  const [inputFields, setInputFields] = useState({
+  const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
@@ -23,8 +23,8 @@ function Login () {
       setIsLoading(true)
 
       const response = await axios.post(`${VITE_APP_HOST}/users/sign_in`, {
-        email: inputFields.email,
-        password: inputFields.password,
+        email: formData.email,
+        password: formData.password,
       });
 
       const { token, exp } = response.data;
@@ -56,8 +56,8 @@ function Login () {
   };
 
   const handleChange = (e) => {
-    setInputFields({
-      ...inputFields,
+    setFormData({
+      ...formData,
       [e.target.name]: e.target.value
     });
   };
@@ -97,7 +97,7 @@ function Login () {
 
   const handleBlur = (event) => {
     event.preventDefault();
-    setErrors(validateValues(inputFields, event));
+    setErrors(validateValues(formData, event));
   };
 
   // const finishSubmit = () => {
@@ -131,11 +131,10 @@ function Login () {
               id="email"
               name="email"
               placeholder="請輸入 email"
-              value={inputFields.email}
+              value={formData.email}
               onChange={handleChange}
               onBlur={handleBlur}
               required />
-            {/* <span>此欄位不可留空</span> */}
             {errors.email && <span>{errors.email}</span>}
 
             <label className="formControls_label" htmlFor="password">密碼</label>
@@ -145,7 +144,7 @@ function Login () {
               name="password"
               id="password"
               placeholder="請輸入密碼"
-              value={inputFields.password}
+              value={formData.password}
               onChange={handleChange}
               onBlur={handleBlur}
               required />
@@ -161,7 +160,11 @@ function Login () {
               disabled={isLoading}
               onClick={() => {
                 // validate all input field
-                setErrors(validateValues(inputFields));
+                console.log('formData', formData);
+                let validationErrors = validateValues(formData);
+                console.log('validationErrors', validationErrors);
+                setErrors(validationErrors);
+                console.log('errors', errors);
                 !errors && login()
               }}
               >登入</button>
