@@ -202,6 +202,9 @@ const TodoList = () => {
     // console.log("User pressed: ", event.key);
 
     if (event.key === "Enter") {
+      // prevent enter key default is so important, this event is bubble propagate to the alert pop window
+      // then auto close the warning message pop alert
+      event.preventDefault();
       console.log("Enter key pressed ✅");
       addNewTodo();
     }
