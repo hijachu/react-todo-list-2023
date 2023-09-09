@@ -18,6 +18,7 @@ const TodoList = () => {
   const nevigate = useNavigate();
 
   /* Get browser cookie (authentication token)*/
+  // console.log('document.cookie', document.cookie);
   const cookieValue = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token="))

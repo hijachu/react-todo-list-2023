@@ -18,9 +18,9 @@ const Register = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [registerError, setRegisterError] = useState("");
+  const [registerError, setRegisterError] = useState([]);
 
-  const navigate = useNavigate(); // 把 hook 取出來做使用
+  const navigate = useNavigate();
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -28,6 +28,7 @@ const Register = () => {
       ...formData,
       [name]: value,
     });
+
     setErrors({
       ...errors,
       [name]: ''
@@ -37,12 +38,13 @@ const Register = () => {
 
   // validate input field when blur
   function validateValues (formData) {
+    // console.log('formData', formData);
+
     let validationErrors = {};
 
     // console.log('arguments', arguments)
     // console.log('arguments.length', arguments.length)
-    // console.log('formData', formData)
-    // console.log('errors', errors);
+
 
     // email validation error
     if (arguments.length === 1 || arguments[1]?.target.name === 'email' ) {
@@ -119,7 +121,7 @@ const Register = () => {
 
   async function register() {
     try {
-      console.log('press register button');
+      // console.log('press register button');
       setIsLoading(true);
 
       const response = await axios.post(
@@ -127,17 +129,19 @@ const Register = () => {
         formData
       );
       console.log(response);
-      navigate("/auth/login"); // 當註冊成功，轉址到登入頁
+
+      // after register successfully, redirect to login page
+      navigate("/auth/login");
 
     } catch (error) {
       setIsLoading(false);
 
       console.log(error);
 
-      setRegisterError(error.response.data.message);
+      setRegisterError([...error.response.data.message]);
       Swal.fire({
         title: "註冊帳號錯誤!!",
-        text: `${registerError}`,
+        text: JSON.stringify(registerError),
         icon: "error",
       });
     }
@@ -240,6 +244,7 @@ const Register = () => {
               <button
                 className="formControls_btnSubmit"
                 type="button"
+                disabled={isLoading}
                 onClick={(e) => {
                   e.preventDefault();
                   // validate all input field

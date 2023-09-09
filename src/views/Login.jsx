@@ -12,13 +12,13 @@ function Login() {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [loginError, setLoginError] = useState("");
+  const [loginError, setLoginError] = useState([]);
 
   const navigate = useNavigate(); // 把 hook 取出來做使用
 
   const login = async () => {
     try {
-      console.log("press login button");
+      // console.log("press login button");
       setIsLoading(true);
 
       const response = await axios.post(`${VITE_APP_HOST}/users/sign_in`, {
@@ -27,8 +27,9 @@ function Login() {
       });
 
       const { token, exp } = response.data;
-      console.log("token", token);
-      document.cookie = `token=${token};expires=${new Date(exp * 1000)}`;
+      // in production code, the token should not be displayed in console
+      // console.log("token", token);
+      document.cookie = `token=${token}; expires=${new Date(exp * 1000)}`;
 
       setIsLoading(false);
 
@@ -45,11 +46,12 @@ function Login() {
       setIsLoading(false);
       console.log(error);
       // error.message => Request failed with status code 404
+      console.log('error.response.data.message', error.response.data.message);
       setLoginError(error.response.data.message);
 
       Swal.fire({
         title: "登入錯誤",
-        text: loginError,
+        text: JSON.stringify(error.response.data.message),
         icon: "error",
       });
     }
@@ -192,7 +194,7 @@ function Login() {
               >
                 登入
               </button>
-              {loginError && <span>{loginError}</span>}
+              {loginError && <span>{JSON.stringify(loginError)}</span>}
 
               <button
                 className="formControls_btnSubmit"
