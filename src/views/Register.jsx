@@ -163,6 +163,7 @@ const Register = () => {
               alt="workImg"
             />
           </div>
+
           <div>
             <form className="formControls">
               <h2 className="formControls_txt">註冊帳號</h2>
