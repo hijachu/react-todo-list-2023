@@ -105,6 +105,10 @@ const Register = () => {
   };
 
   function errorsAllValuesEmptyString(errors) {
+    if (Object.keys(errors).length === 0) {
+      return true;
+    }
+
     for (const key in errors) {
       if (errors.hasOwnProperty(key) && errors[key] !== '') {
         return false;
@@ -115,7 +119,7 @@ const Register = () => {
 
   async function register() {
     try {
-      console.log('press button register');
+      console.log('press register button');
       setIsLoading(true);
 
       const response = await axios.post(
@@ -231,19 +235,25 @@ const Register = () => {
               />
               {errors.passwordConfirm && <span>{errors.passwordConfirm}</span>}
 
+              {/* 註冊帳號 */}
               <button
                 className="formControls_btnSubmit"
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   // validate all input field
-                  setErrors(validateValues(formData));
-                  console.log(errors);
-                  errorsAllValuesEmptyString(errors) && register();
+                  let validationErrors = validateValues(formData);
+                  console.log('validationErrors', validationErrors);
+
+                  setErrors(validationErrors);
+                  console.log('errors', errors);
+                  errorsAllValuesEmptyString(validationErrors) && register();
                 }}
               >
                 註冊帳號
               </button>
+
+              {/* 登入 */}
               <button
                 className="formControls_btnSubmit"
                 type="button"

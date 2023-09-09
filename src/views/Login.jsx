@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // hook
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -34,26 +34,30 @@ function Login () {
       setIsLoading(false);
 
       Swal.fire({
-        title: 'Title...',
-        text: 'Hello World!',
-        type: 'success'
-      }, function() {
-        console.log('bye');
-      });
-      navigate('/todo');
+        title: '登入成功',
+        text: '自動導入 TODO 清單',
+        type: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      })
+      .then(function() {
+        navigate('/todo');
+      })
 
     } catch (error) {
       setIsLoading(false);
       console.log(error);
       // setLoginError(error.message); // Request failed with status code 404
       setLoginError(error.response.data.message);
+
       Swal.fire({
-        title: 'Login Error!!',
+        title: '登入錯誤',
         text: loginError,
         icon: 'error'
       })
     }
   };
+
 
   const handleChange = (e) => {
     setFormData({
@@ -62,23 +66,27 @@ function Login () {
     });
   };
 
+
   // validate input field when blur
   function validateValues (inputValues) {
     let validationErrors = {};
 
     // console.log('arguments', arguments)
-    // console.log('arguments.length', arguments.length)
+    console.log('arguments.length', arguments.length)
 
     // email validation error
     if (arguments.length === 1 || arguments[1]?.target.name === 'email' ) {
       if (inputValues.email.length === 0) {
         validationErrors.email = "Email 欄位不可留空";
       }
-      else if (inputValues.email.length < 10) {
-        validationErrors.email = "Email 長度太短";
+      else if (inputValues.email.length < 8) {
+        validationErrors.email = "Email 長度太短 (8)";
       }
       else if (/\S+@\S+\.\S+/.test(validationErrors.email)) {
         validationErrors.email = "Email 格式不正確";
+      }
+      else {
+        validationErrors.email = "";
       }
     }
 
@@ -88,37 +96,47 @@ function Login () {
         validationErrors.password = "密碼 欄位不可留空";
       }
       else if (inputValues.password.length < 5) {
-        validationErrors.password = "密碼 長度太短";
+        validationErrors.password = "密碼 長度太短 (5)";
+      }
+      else {
+        validationErrors.password = "";
       }
     }
 
     return {...errors, ...validationErrors};
   }
 
+  function errorsAllValuesEmptyString(errors) {
+    if (Object.keys(errors).length === 0) {
+      return true;
+    }
+
+    for (const key in errors) {
+      if (errors.hasOwnProperty(key) && errors[key] !== '') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
   const handleBlur = (event) => {
     event.preventDefault();
     setErrors(validateValues(formData, event));
   };
 
-  // const finishSubmit = () => {
-  //   console.log(inputFields);
-  // };
-
-  // useEffect(() => {
-  //   if (Object.keys(errors).length === 0 && isLoading) {
-  //     finishSubmit();
-  //   }
-  // }, [errors]);
 
   return (<>
     <div id="loginPage" className="bg-yellow">
       <div className="container loginPage vhContainer">
         <div className="side">
           <a href="#">
-            <img className="logoImg" src={"https://upload.cc/i1/2022/03/23/rhefZ3.png"} alt="" />
+            {/* online todo list icon */}
+            <img className="logoImg" src="https://upload.cc/i1/2022/03/23/rhefZ3.png" alt="" />
             <meta name="referrer" content="no-referrer" />
           </a>
-          <img className="d-m-n" src={"https://upload.cc/i1/2022/03/23/tj3Bdk.png"} alt="workImg" />
+          {/* online todo list work image */}
+          <img className="d-m-n" src="https://upload.cc/i1/2022/03/23/tj3Bdk.png" alt="workImg" />
         </div>
 
         <div>
@@ -162,13 +180,15 @@ function Login () {
                 // validate all input field
                 console.log('formData', formData);
                 let validationErrors = validateValues(formData);
-                console.log('validationErrors', validationErrors);
-                setErrors(validationErrors);
-                console.log('errors', errors);
-                !errors && login()
+                // console.log('validationErrors', validationErrors);
+                // setErrors({...validationErrors});
+                setErrors(validateValues(formData));
+                // console.log('errors', errors);
+                errorsAllValuesEmptyString(validationErrors) && login()
               }}
               >登入</button>
             {loginError && <span>{loginError}</span>}
+
             <button
               className="formControls_btnSubmit"
               type="button"
