@@ -178,11 +178,11 @@ const TodoList = () => {
       denyButtonText: "否",
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "登出",
-          showConfirmButton: false,
-          timer: 1500,
-        });
+        // Swal.fire({
+        //   title: "登出",
+        //   showConfirmButton: false,
+        //   // timer: 1500,
+        // });
 
         // 導到登入頁
         nevigate("/auth/login");

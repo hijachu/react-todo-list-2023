@@ -34,8 +34,8 @@ function Login() {
 
       Swal.fire({
         title: "登入成功",
-        text: "稍後自動導到 TODO 清單",
-        timer: 800,
+        text: "稍後自動導到 代辦清單",
+        timer: 1000,
         showConfirmButton: false,
       }).then(function () {
         // 自動導到 TODO 清單
@@ -44,7 +44,7 @@ function Login() {
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-      // setLoginError(error.message); // Request failed with status code 404
+      // error.message => Request failed with status code 404
       setLoginError(error.response.data.message);
 
       Swal.fire({
