@@ -15,7 +15,7 @@ const TodoList = () => {
   const [unfinished, setUnfinished] = useState(0);
   const [tab, setTab] = useState("all");
 
-  const nevigate = useNavigate();
+  const navigate = useNavigate();
 
   /* Get browser cookie (authentication token)*/
   // console.log('document.cookie', document.cookie);
@@ -51,7 +51,7 @@ const TodoList = () => {
           confirmButtonText: "OK",
         }).then(() => {
           // 導向登入頁
-          nevigate("/auth/login");
+          navigate("/auth/login");
         });
       }
     })();
@@ -181,7 +181,7 @@ const TodoList = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         // 導到登入頁
-        nevigate("/auth/login");
+        navigate("/auth/login");
 
         // 清除 cookie
         document.cookie = "token=; SameSite=None; Secure";
