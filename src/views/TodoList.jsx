@@ -236,7 +236,7 @@ const TodoList = () => {
           </ul>
         </nav>
 
-        <div className="conatiner todoListPage vhContainer">
+        <div className="container todoListPage vhContainer">
           <div className="todoList_Content">
             <div className="inputBox">
               <input

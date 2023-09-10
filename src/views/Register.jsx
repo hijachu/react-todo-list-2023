@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // hook
 import Swal from "sweetalert2";
@@ -19,6 +19,11 @@ const Register = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [registerError, setRegisterError] = useState([]);
+
+  const emailRef = useRef();
+  const nicknameRef = useRef();
+  const passwordRef = useRef();
+  const passwordConfirmRef = useRef();
 
   const navigate = useNavigate();
 
@@ -44,7 +49,7 @@ const Register = () => {
 
     let validationErrors = {};
 
-    // console.log('arguments.length', arguments.length)
+    console.log('arguments.length', arguments.length)
 
     // email validation error
     if (arguments.length === 1 || arguments[1]?.target.name === 'email' ) {
@@ -58,7 +63,7 @@ const Register = () => {
         validationErrors.email = "Email 格式不正確";
       }
       else {
-        validationErrors.email = "";
+        delete validationErrors.email;
       }
     }
 
@@ -68,7 +73,7 @@ const Register = () => {
         validationErrors.nickname = "暱稱 欄位不可留空";
       }
       else {
-        validationErrors.nickname = "";
+        delete validationErrors.nickname;
       }
     }
 
@@ -81,7 +86,7 @@ const Register = () => {
         validationErrors.password = "密碼 長度需至少 6 碼";
       }
       else {
-        validationErrors.password = ""
+        delete validationErrors.password;
       }
     }
 
@@ -94,11 +99,11 @@ const Register = () => {
         validationErrors.passwordConfirm = "再次輸入密碼內容 與 密碼欄位內容 不一致"
       }
       else {
-        validationErrors.passwordConfirm = ""
+        delete validationErrors.passwordConfirm;
       }
     }
 
-    return {...errors, ...validationErrors};
+    return validationErrors;
   }
 
   const handleBlur = (event) => {
@@ -106,17 +111,33 @@ const Register = () => {
     setErrors(validateValues(formData, event));
   };
 
-  function isNoError_FocusOnError(errors) {
+  function isNoError_FocusOnErrorInput(errors) {
     // check if errors empty object
     if (Object.keys(errors).length === 0) {
       return true;
     }
 
     for (const key in errors) {
-      if (errors.hasOwnProperty(key) && errors[key] !== '') {
+      if (errors.hasOwnProperty(key) && errors[key] !== "") {
+        // set focus on input if error on it
+        if (key === 'email') {
+          emailRef.current.focus()
+        }
+        else if (key === 'nickname') {
+          nicknameRef.current.focus()
+        }
+        else if (key === 'password') {
+          passwordRef.current.focus()
+        }
+        else if (key === 'passwordConfirm') {
+          passwordConfirmRef.current.focus()
+        }
+
+        // if there is an error, just return false, no need to check the remainder
         return false;
       }
     }
+
     return true;
   }
 
@@ -155,6 +176,22 @@ const Register = () => {
     }
   }
 
+  const handleKeyDown = (event) => {
+    // console.log("User pressed: ", event.key);
+
+    if (event.key === "Enter") {
+      // prevent enter key default is so important, this event is bubble propagate to the alert pop window
+      // then auto close the warning message pop alert
+      event.preventDefault();
+      console.log("Enter key pressed ✅");
+      console.log('formData', formData);
+      let inputErrors = validateValues(formData);
+      setErrors({...inputErrors});
+
+      isNoError_FocusOnErrorInput(inputErrors) && register();
+    }
+  };
+
   return (
     <>
       <div id="signUpPage" className="bg-yellow">
@@ -163,15 +200,14 @@ const Register = () => {
             <a href="#">
               <img
                 className="logoImg"
-                src="https://upload.cc/i1/2022/03/23/rhefZ3.png"
-                alt=""
-                referrerPolicy="no-referrer"
+                src="logo.png"
+                alt="logo"
               />
               <meta name="referrer" content="no-referrer" />
             </a>
             <img
               className="d-m-n"
-              src="https://upload.cc/i1/2022/03/23/tj3Bdk.png"
+              src="main.png"
               alt="workImg"
             />
           </div>
@@ -188,9 +224,12 @@ const Register = () => {
                 name="email"
                 id="email"
                 placeholder="請輸入 email"
+                autoFocus
+                ref={emailRef}
                 value={formData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
                 required
               />
               {errors.email && <span>{errors.email}</span>}
@@ -204,9 +243,11 @@ const Register = () => {
                 name="nickname"
                 id="nickname"
                 placeholder="請輸入您的暱稱"
+                ref={nicknameRef}
                 value={formData.nickname}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
               />
               {errors.nickname && <span>{errors.nickname}</span>}
 
@@ -219,9 +260,11 @@ const Register = () => {
                 name="password"
                 id="password"
                 placeholder="請輸入密碼"
+                ref={passwordRef}
                 value={formData.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
                 required
               />
               {errors.password && <span>{errors.password}</span>}
@@ -235,6 +278,7 @@ const Register = () => {
                 name="passwordConfirm"
                 id="passwordConfirm"
                 placeholder="請再次輸入密碼"
+                ref={passwordConfirmRef}
                 value={passwordConfirm}
                 onChange={(e) => {
                   setPasswordConfirm(e.target.value)
@@ -244,6 +288,7 @@ const Register = () => {
                   })
                 }}
                 onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
                 required
               />
               {errors.passwordConfirm && <span>{errors.passwordConfirm}</span>}
@@ -261,7 +306,7 @@ const Register = () => {
 
                   setErrors(validationErrors);
                   console.log('errors', errors);
-                  isNoError_FocusOnError(validationErrors) && register();
+                  isNoError_FocusOnErrorInput(validationErrors) && register();
                 }}
               >
                 註冊帳號

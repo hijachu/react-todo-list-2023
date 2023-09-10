@@ -110,7 +110,8 @@ function Login() {
     return validationErrors;
   }
 
-  function isNoError_FocusOnError(errors) {
+  function isNoError_FocusOnErrorInput(errors) {
+    console.log('errors', errors);
     // check if errors is empty object
     if (Object.keys(errors).length === 0) {
       return true;
@@ -118,7 +119,7 @@ function Login() {
 
     for (const key in errors) {
       if (errors.hasOwnProperty(key) && errors[key] !== "") {
-        // todo: set input focus on it
+        // set focus on input if error on it
         if (key === 'email') {
           emailRef.current.focus()
         }
@@ -126,15 +127,32 @@ function Login() {
           passwordRef.current.focus()
         }
 
+        // if there is an error, just return false, no need to check the remainder
         return false;
       }
     }
+
     return true;
   }
 
   const handleBlur = (event) => {
     event.preventDefault();
     setErrors(validateValues(formData, event));
+  };
+
+  const handleKeyDown = (event) => {
+    // console.log("User pressed: ", event.key);
+
+    if (event.key === "Enter") {
+      // prevent enter key default is so important, this event is bubble propagate to the alert pop window
+      // then auto close the warning message pop alert
+      event.preventDefault();
+      console.log("Enter key pressed ✅");
+      console.log('formData', formData);
+      let inputErrors = validateValues(formData);
+      setErrors({...inputErrors})
+      isNoError_FocusOnErrorInput(inputErrors) && login();
+    }
   };
 
   return (
@@ -178,6 +196,7 @@ function Login() {
                 value={formData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
                 required
               />
               {errors.email && <span>{errors.email}</span>}
@@ -195,6 +214,7 @@ function Login() {
                 value={formData.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
                 required
               />
               {errors.password && <span>{errors.password}</span>}
@@ -218,7 +238,7 @@ function Login() {
                   setErrors({...validationErrors});
                   console.log('errors', errors);
 
-                  isNoError_FocusOnError(validationErrors) && login();
+                  isNoError_FocusOnErrorInput(validationErrors) && login();
                 }}
               >
                 登入
