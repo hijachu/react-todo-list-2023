@@ -34,7 +34,6 @@ const Register = () => {
       [name]: value
     });
 
-
     // when the target input is onChanged, reset the error for this input target
     setErrors({
       ...errors,

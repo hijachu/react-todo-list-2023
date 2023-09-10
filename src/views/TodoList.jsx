@@ -174,17 +174,12 @@ const TodoList = () => {
 
     Swal.fire({
       title: "確認登出",
+      text: "導回登入頁",
       showDenyButton: true,
       confirmButtonText: "是",
       denyButtonText: "否",
     }).then((result) => {
       if (result.isConfirmed) {
-        // Swal.fire({
-        //   title: "登出",
-        //   showConfirmButton: false,
-        //   // timer: 1500,
-        // });
-
         // 導到登入頁
         nevigate("/auth/login");
 
@@ -220,7 +215,7 @@ const TodoList = () => {
           <ul>
             <li className="todo_sm">
               <a
-                // href="#"  // this will make ther pointer cursor shows, so comment it
+                // href="#"  // this will make the pointer cursor shows, so comment it
                 onClick={(e) => {
                   e.preventDefault();
                 }}
@@ -316,7 +311,7 @@ const TodoList = () => {
                     ""
                   )}
 
-                  {/* otherwise, diplay the todo list */}
+                  {/* otherwise, display the todo list */}
                   {filteredTodos.map((todoItem) => {
                     return (
                       <li key={todoItem.id}>
