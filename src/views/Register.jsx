@@ -26,25 +26,25 @@ const Register = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: value
     });
 
+
+    // when the target input is onChanged, reset the error for this input target
     setErrors({
       ...errors,
       [name]: ''
-    })
+    });
   }
 
 
-  // validate input field when blur
+  // validate input field
   function validateValues (formData) {
     // console.log('formData', formData);
 
     let validationErrors = {};
 
-    // console.log('arguments', arguments)
     // console.log('arguments.length', arguments.length)
-
 
     // email validation error
     if (arguments.length === 1 || arguments[1]?.target.name === 'email' ) {
@@ -52,7 +52,7 @@ const Register = () => {
         validationErrors.email = "Email 欄位不可留空";
       }
       else if (formData.email.length < 10) {
-        validationErrors.email = "Email 長度太短";
+        validationErrors.email = "Email 長度太短 (10)";
       }
       else if (/\S+@\S+\.\S+/.test(validationErrors.email)) {
         validationErrors.email = "Email 格式不正確";
@@ -77,21 +77,21 @@ const Register = () => {
       if (formData.password.length === 0) {
         validationErrors.password = "密碼 欄位不可留空";
       }
-      else if (formData.password.length < 5) {
-        validationErrors.password = "密碼 長度太短";
+      else if (formData.password.length < 6) {
+        validationErrors.password = "密碼 長度需至少 6 碼";
       }
       else {
         validationErrors.password = ""
       }
     }
 
-    // retype password check
+    // confirm (retype) password check
     if (arguments.length === 1 || arguments[1]?.target.name === 'passwordConfirm') {
       if (passwordConfirm.length === 0) {
         validationErrors.passwordConfirm = "再次輸入密碼 欄位不可留空"
       }
       else if (formData.password !== '' && passwordConfirm !== formData.password) {
-        validationErrors.passwordConfirm = "再次輸入密碼內容與密碼不一致"
+        validationErrors.passwordConfirm = "再次輸入密碼內容 與 密碼欄位內容 不一致"
       }
       else {
         validationErrors.passwordConfirm = ""
@@ -106,7 +106,8 @@ const Register = () => {
     setErrors(validateValues(formData, event));
   };
 
-  function errorsAllValuesEmptyString(errors) {
+  function isNoError_FocusOnError(errors) {
+    // check if errors empty object
     if (Object.keys(errors).length === 0) {
       return true;
     }
@@ -130,8 +131,15 @@ const Register = () => {
       );
       console.log(response);
 
-      // after register successfully, redirect to login page
-      navigate("/auth/login");
+      Swal.fire({
+        title: "註冊成功",
+        text: "稍後自動導到 登入頁面",
+        timer: 1000,
+        showConfirmButton: false,
+      }).then(function () {
+        // after register successfully, redirect to login page
+        navigate("/auth/login");
+      });
 
     } catch (error) {
       setIsLoading(false);
@@ -140,7 +148,7 @@ const Register = () => {
 
       setRegisterError([...error.response.data.message]);
       Swal.fire({
-        title: "註冊帳號錯誤!!",
+        title: "註冊帳號錯誤",
         text: JSON.stringify(registerError),
         icon: "error",
       });
@@ -253,7 +261,7 @@ const Register = () => {
 
                   setErrors(validationErrors);
                   console.log('errors', errors);
-                  errorsAllValuesEmptyString(validationErrors) && register();
+                  isNoError_FocusOnError(validationErrors) && register();
                 }}
               >
                 註冊帳號

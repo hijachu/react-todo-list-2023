@@ -190,7 +190,7 @@ const TodoList = () => {
 
         // 清除 cookie
         document.cookie = "token=; SameSite=None; Secure";
-        /* 同時確保該 cookie 在跨站請求中仍被發送（SameSite 屬性設置為 "None"），
+        /* 同時確保該 cookie 在跨站請求中仍被發送（SameSite 屬性設置為 "None"）
           並且僅在安全的 HTTPS 連接中使用（Secure 標誌） */
       } else if (result.isDenied) {
         return;

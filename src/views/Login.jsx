@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // hook
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -14,7 +14,10 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState([]);
 
-  const navigate = useNavigate(); // 把 hook 取出來做使用
+  const emailRef = useRef();
+  const passwordRef = useRef();
+
+  const navigate = useNavigate();
 
   const login = async () => {
     try {
@@ -44,8 +47,9 @@ function Login() {
       });
     } catch (error) {
       setIsLoading(false);
+
       console.log(error);
-      // error.message => Request failed with status code 404
+      // error.message => "Request failed with status code 404"
       console.log('error.response.data.message', error.response.data.message);
       setLoginError(error.response.data.message);
 
@@ -58,9 +62,17 @@ function Login() {
   };
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value
+    });
+
+    // when the target input is onChanged, reset the error for this input target
+    setErrors({
+      ...errors,
+      [name]: ''
     });
   };
 
@@ -76,11 +88,11 @@ function Login() {
       if (inputValues.email.length === 0) {
         validationErrors.email = "Email 欄位不可留空";
       } else if (inputValues.email.length < 8) {
-        validationErrors.email = "Email 長度太短 (8)";
+        validationErrors.email = "Email 長度需至少 8 碼";
       } else if (/\S+@\S+\.\S+/.test(validationErrors.email)) {
         validationErrors.email = "Email 格式不正確";
       } else {
-        validationErrors.email = "";
+        delete validationErrors.email;
       }
     }
 
@@ -88,23 +100,32 @@ function Login() {
     if (arguments.length === 1 || arguments[1]?.target.name === "password") {
       if (inputValues.password.length === 0) {
         validationErrors.password = "密碼 欄位不可留空";
-      } else if (inputValues.password.length < 5) {
-        validationErrors.password = "密碼 長度太短 (5)";
+      } else if (inputValues.password.length < 6) {
+        validationErrors.password = "密碼 長度需至少 6 碼";
       } else {
-        validationErrors.password = "";
+        delete validationErrors.password;
       }
     }
 
-    return { ...errors, ...validationErrors };
+    return validationErrors;
   }
 
-  function errorsAllValuesEmptyString(errors) {
+  function isNoError_FocusOnError(errors) {
+    // check if errors is empty object
     if (Object.keys(errors).length === 0) {
       return true;
     }
 
     for (const key in errors) {
       if (errors.hasOwnProperty(key) && errors[key] !== "") {
+        // todo: set input focus on it
+        if (key === 'email') {
+          emailRef.current.focus()
+        }
+        else if (key === 'password') {
+          passwordRef.current.focus()
+        }
+
         return false;
       }
     }
@@ -125,15 +146,17 @@ function Login() {
               {/* online todo list icon */}
               <img
                 className="logoImg"
-                src="https://upload.cc/i1/2022/03/23/rhefZ3.png"
+                // src="https://upload.cc/i1/2022/03/23/rhefZ3.png"
+                src="logo.png"
                 alt="logo"
               />
-              <meta name="referrer" content="no-referrer" />
+              {/* <meta name="referrer" content="no-referrer" /> */}
             </a>
             {/* online todo list work image */}
             <img
               className="d-m-n"
-              src="https://upload.cc/i1/2022/03/23/tj3Bdk.png"
+              // src="https://upload.cc/i1/2022/03/23/tj3Bdk.png"
+              src="main.png"
               alt="workImg"
             />
           </div>
@@ -150,6 +173,8 @@ function Login() {
                 id="email"
                 name="email"
                 placeholder="請輸入 email"
+                autoFocus
+                ref={emailRef}
                 value={formData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -166,6 +191,7 @@ function Login() {
                 name="password"
                 id="password"
                 placeholder="請輸入密碼"
+                ref={passwordRef}
                 value={formData.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -173,27 +199,31 @@ function Login() {
               />
               {errors.password && <span>{errors.password}</span>}
 
-              {/* <p><span>inputFileds: </span>{JSON.stringify(inputFields)}</p>
-            <p><span>errors: </span>{JSON.stringify(errors)}</p>
-            <p><span>isLoading: </span>{isLoading ? 'true': 'false'}</p> */}
+              {/* for debug use */}
+              {/*
+              <p><span>formData: </span>{JSON.stringify(formData)}</p>
+              <p><span>errors: </span>{JSON.stringify(errors)}</p>
+              <p><span>isLoading: </span>{isLoading ? 'true': 'false'}</p>
+              */}
 
               <button
                 className="formControls_btnSubmit"
                 type="button"
                 disabled={isLoading}
                 onClick={() => {
-                  // validate all input field
+                  // validate all input fields
                   console.log("formData", formData);
                   let validationErrors = validateValues(formData);
                   // console.log('validationErrors', validationErrors);
-                  // setErrors({...validationErrors});
-                  setErrors(validateValues(formData));
-                  // console.log('errors', errors);
-                  errorsAllValuesEmptyString(validationErrors) && login();
+                  setErrors({...validationErrors});
+                  console.log('errors', errors);
+
+                  isNoError_FocusOnError(validationErrors) && login();
                 }}
               >
                 登入
               </button>
+              {/* for debug use */}
               {/* {loginError && <span>{JSON.stringify(loginError)}</span>} */}
 
               <button
