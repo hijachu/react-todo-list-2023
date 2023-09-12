@@ -117,7 +117,7 @@ const Register = () => {
     }
 
     for (const key in errors) {
-      if (errors.hasOwnProperty(key) && errors[key] !== "") {
+      if (Object.prototype.hasOwnProperty.call(errors, key) && errors[key] !== "") {
         // set focus on input if error on it
         if (key === 'email') {
           emailRef.current.focus()

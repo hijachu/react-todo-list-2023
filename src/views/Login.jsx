@@ -12,7 +12,6 @@ function Login() {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [loginError, setLoginError] = useState([]);
 
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -51,7 +50,6 @@ function Login() {
       console.log(error);
       // error.message => "Request failed with status code 404"
       console.log('error.response.data.message', error.response.data.message);
-      setLoginError(error.response.data.message);
 
       Swal.fire({
         title: "登入錯誤",
@@ -118,7 +116,7 @@ function Login() {
     }
 
     for (const key in errors) {
-      if (errors.hasOwnProperty(key) && errors[key] !== "") {
+      if (Object.prototype.hasOwnProperty.call(errors, key) && errors[key] !== "") {
         // set focus on input if error on it
         if (key === 'email') {
           emailRef.current.focus()
@@ -127,7 +125,7 @@ function Login() {
           passwordRef.current.focus()
         }
 
-        // if there is an error, just return false, no need to check the remainder
+        // if there is an error happened, just return false immediately, no need to check the remainder
         return false;
       }
     }
