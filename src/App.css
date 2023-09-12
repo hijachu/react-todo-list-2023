@@ -9,3 +9,12 @@
   background: #efdfdf;
   color: #b18036;
 }
+
+.inputBox a {
+  transition: 0.3s;
+}
+
+.inputBox a:hover {
+  background: rgb(198, 181, 29);
+  color: #140d67;
+}
