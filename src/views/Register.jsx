@@ -164,10 +164,14 @@ const Register = () => {
       setIsLoading(false);
 
       console.log(error.response.data.message);
+      let message = error.response.data.message
+
+      // there are two types for the message: array or string
+      // ["密碼格式錯誤"] or "用戶已存在"
 
       Swal.fire({
         title: "註冊帳號錯誤",
-        text: error.response.data.message.join(", "),
+        text: Array.isArray(message) ? message.join(", ") : message,
         icon: "error",
       });
     }
