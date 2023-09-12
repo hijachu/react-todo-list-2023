@@ -18,7 +18,6 @@ const Register = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [registerError, setRegisterError] = useState([]);
 
   const emailRef = useRef();
   const nicknameRef = useRef();
@@ -58,6 +57,10 @@ const Register = () => {
       else if (formData.email.length < 10) {
         validationErrors.email = "Email 長度太短 (10)";
       }
+      // else {
+      //   delete validationErrors.email;
+      // }
+
       else if (/\S+@\S+\.\S+/.test(validationErrors.email)) {
         validationErrors.email = "Email 格式不正確";
       }
@@ -166,10 +169,9 @@ const Register = () => {
 
       console.log(error);
 
-      setRegisterError([...error.response.data.message]);
       Swal.fire({
         title: "註冊帳號錯誤",
-        text: JSON.stringify(registerError),
+        text: error.response.data.message.join(", "),
         icon: "error",
       });
     }
