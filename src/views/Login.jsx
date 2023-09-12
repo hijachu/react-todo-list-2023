@@ -87,7 +87,7 @@ function Login() {
         validationErrors.email = "Email 欄位不可留空";
       } else if (inputValues.email.length < 8) {
         validationErrors.email = "Email 長度需至少 8 碼";
-      } else if (/\S+@\S+\.\S+/.test(validationErrors.email)) {
+      } else if (!/\S+@\S+\.\S+/.test(inputValues.email)) {
         validationErrors.email = "Email 格式不正確";
       } else {
         delete validationErrors.email;
@@ -162,16 +162,13 @@ function Login() {
               {/* online todo list icon */}
               <img
                 className="logoImg"
-                // src="https://upload.cc/i1/2022/03/23/rhefZ3.png"
                 src="logo.png"
                 alt="logo"
               />
-              {/* <meta name="referrer" content="no-referrer" /> */}
             </a>
             {/* online todo list work image */}
             <img
               className="d-m-n"
-              // src="https://upload.cc/i1/2022/03/23/tj3Bdk.png"
               src="main.png"
               alt="workImg"
             />

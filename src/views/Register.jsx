@@ -43,7 +43,7 @@ const Register = () => {
 
   // validate input field
   function validateValues (formData) {
-    // console.log('formData', formData);
+    console.log('formData', formData);
 
     let validationErrors = {};
 
@@ -57,11 +57,7 @@ const Register = () => {
       else if (formData.email.length < 10) {
         validationErrors.email = "Email 長度太短 (10)";
       }
-      // else {
-      //   delete validationErrors.email;
-      // }
-
-      else if (/\S+@\S+\.\S+/.test(validationErrors.email)) {
+      else if (!/\S+@\S+\.\S+/.test(formData.email)) {
         validationErrors.email = "Email 格式不正確";
       }
       else {
@@ -167,7 +163,7 @@ const Register = () => {
     } catch (error) {
       setIsLoading(false);
 
-      console.log(error);
+      console.log(error.response.data.message);
 
       Swal.fire({
         title: "註冊帳號錯誤",
@@ -305,7 +301,7 @@ const Register = () => {
                   let validationErrors = validateValues(formData);
                   console.log('validationErrors', validationErrors);
 
-                  setErrors(validationErrors);
+                  setErrors({...validationErrors});
                   console.log('errors', errors);
                   isNoError_FocusOnErrorInput(validationErrors) && register();
                 }}
